@@ -1,6 +1,6 @@
 module.exports = {
     // 所有的资源都会被链接为相对路径
-    publicPath: '/',
+    publicPath: '/vue-draggable-table/',
     // 关闭sourcemap
     productionSourceMap: false,
     pages: {
