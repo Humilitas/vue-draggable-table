@@ -1,5 +1,6 @@
 <template>
     <div class="draggable-table">
+        <h1>Drag Items to Rearrange</h1>
         <table>
             <tr v-for="d in data" :key="d[0].id">
                 <td v-for="{value,id} in d" :key="id" :data-id="id" draggable="true" @dragstart="dragstart" @dragend="dragend"
@@ -28,17 +29,13 @@
         },
         methods: {
             dragstart(e) {
-                // 保存拖动元素的引用(ref.)
                 let sourceEl = e.target;
-                // 使其半透明
                 sourceEl.classList.add('dragged');
                 let id = sourceEl.dataset.id;
                 e.dataTransfer.setData('id', id);
             },
             dragend(e) {
-                // 保存拖动元素的引用(ref.)
                 let sourceEl = e.target;
-                // 使其半透明
                 sourceEl.classList.remove('dragged');
                 let id = sourceEl.dataset.id;
                 e.dataTransfer.setData('id', id);
@@ -48,19 +45,24 @@
                 target.classList.add('dragenter');
             },
             dragover(e) {
+                // to enable drop event
                 e.preventDefault();
             },
             dragleave(e) {
                 let dragged = e.target;
                 dragged.classList.remove('dragenter');
             },
-            // eslint-disable-next-line no-unused-vars
             drop(e) {
                 let target = e.target;
                 target.classList.remove('dragenter');
 
                 let tid = parseInt(target.dataset.id);
                 let sid = parseInt(e.dataTransfer.getData('id'));
+
+                if (tid === sid) {
+                    return;
+                }
+
                 let temp = array.flatten(this.data);
 
                 // remove source & append source to target
@@ -76,12 +78,23 @@
 </script>
 
 <style>
+    .draggable-table {
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        color: #eef;
+    }
+
     td {
         cursor: pointer;
-        padding: 3em;
+        padding: 2em;
         background-color: #8BC6EC;
         background-image: linear-gradient(135deg, #8BC6EC 0%, #9599E2 100%);
         box-sizing: border-box;
+        font-size: 2rem;
+        font-weight: bold;
     }
 
     .dragged {
@@ -89,14 +102,17 @@
     }
 
     .dragenter {
-        box-shadow: inset 0 0 10px 10px #4caf50;
+        /*box-shadow: inset 0 0 20px 1px #fff59d;*/
+        animation: drag-enter-shadow 1s infinite alternate ease-in-out;
     }
 
-    .container {
-        width: 300px;
-        height: 200px;
-        background-color: #FF3CAC;
-        background-image: linear-gradient(225deg, #FF3CAC 0%, #784BA0 50%, #2B86C5 100%);
+    @keyframes drag-enter-shadow {
+        from {
+            box-shadow: inset 0 0 5px 5px #ffcfcf;
+        }
 
+        to {
+            box-shadow: inset 0 0 30px 5px rgba(255, 102, 102, 0.15);
+        }
     }
 </style>
